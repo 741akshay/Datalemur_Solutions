@@ -1,0 +1,12 @@
+WITH CTE AS(
+SELECT category,product,sum(spend) as total_spend
+FROM product_spend where EXTRACT(YEAR FROM transaction_date)=2022
+GROUP BY 1,2
+),
+
+CTE1 AS
+(Select *,
+Row_number() OVER(PARTITION  BY category order by total_spend desc) as row_num
+from CTE)
+
+Select category,product,total_spend from CTE1 where row_num<=2;
